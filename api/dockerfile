@@ -1,0 +1,16 @@
+# Utiliser l'image Alpine
+FROM python:3.10
+
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers source dans le conteneur
+COPY . .
+
+# Activer l'environnement virtuel et installer les dépendances Python
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug"]
+

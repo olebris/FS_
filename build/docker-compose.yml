@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address :9001
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: olbolb
+      MINIO_ROOT_PASSWORD: olbolbolb
+    volumes:
+      - ${MINIO_DATA_PATH}:/data
+    networks:
+      - my-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+
+  observer:
+    build:
+      context: ${OBSERVER_PATH}
+    volumes:
+      - ${OBSERVER_IN}:/in
+    networks:
+      - my-network
+    depends_on:
+      - redis
+      - minio
+  
+  api:
+    build:
+      context: ${API_PATH}
+    ports:
+      - "8000:8000"
+    networks:
+      - my-network
+    depends_on:
+      - redis
+      - minio
+  
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:  
+      - ${NGINX_CONF_PATH}:/etc/nginx/conf.d
+    depends_on:
+      - api
+    networks:
+      - my-network
+networks:
+  my-network:

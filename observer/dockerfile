@@ -1,0 +1,18 @@
+# Utiliser l'image Alpine
+FROM python:3.10
+
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers source dans le conteneur
+COPY . .
+
+# Activer l'environnement virtuel et installer les dépendances Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Donner les droits d'exécution à watch.py
+RUN chmod +x /app/watch.py
+
+CMD ["python" , "-u", "/app/watch.py"]
+
